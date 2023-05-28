@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  src:
+    build:
+      context: src
+    image: ${REGISTRY}/src:${IMAGE_TAG}
+    ports:
+      - 8080:8080
+    networks:
+      - public
+      - internal
+    env_file: ./.env/.env_${ENV}
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        monitor: 10s
+        order: start-first
+        failure_action: rollback
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: seidor
+      MYSQL_DATABASE: test
+      MYSQL_USER: lucho
+      MYSQL_PASSWORD: seidor
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql
+
+networks:
+  public:
+    external:
+      name: public
+  internal:
