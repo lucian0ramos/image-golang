@@ -1,5 +1,5 @@
 # Imagen base
-FROM golang:1.16-alpine
+FROM golang:1.18-alpine
 
 # Establecer el directorio de trabajo
 WORKDIR /src
